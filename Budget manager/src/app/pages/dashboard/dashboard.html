@@ -40,19 +40,19 @@
         </div>
     </section>
 
-    <!-- Cabeçalho da Tabela -->
-    <div class="table-header">
-        <span>PROJETO</span>
-        <span>CLIENTE</span>
-        <span>ARQUITETO</span>
-        <span>DATA</span>
-        <span>STATUS</span>
-        <span>NOME DO EDITOR</span>
-        <span>AÇÕES</span>
-    </div>
-
+    
     <!-- Lista de Orçamentos -->
     <div class="budget-list">
+        <!-- Cabeçalho da Tabela -->
+        <div class="table-header">
+            <span>PROJETO</span>
+            <span>CLIENTE</span>
+            <span>ARQUITETO</span>
+            <span>DATA</span>
+            <span>STATUS</span>
+            <span>NOME DO EDITOR</span>
+            <span>AÇÕES</span>
+        </div>
         @for (item of listaOrcamentos; track item.codigo) {
         <div class="budget-row">
             <!-- Coluna: Projeto -->

@@ -1,5 +1,9 @@
 import { Component } from '@angular/core';
+<<<<<<< HEAD
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+=======
+import { ReactiveFormsModule } from '@angular/forms';
+>>>>>>> 72f8949b3cc3c1fc22aec87a91a8d70eee881248
 import { RouterLink } from '@angular/router';
 
 
@@ -9,21 +13,4 @@ import { RouterLink } from '@angular/router';
   templateUrl: './cadastro.html',
   styleUrl: './cadastro.css'
 })
-export class Cadastro {
-  form: any;
-  mensagem: string = '';
-
-  constructor(private fb: FormBuilder) {
-    this.form = this.fb.group({
-      nome: [''],
-      email: [''],
-      senha: [''],
-      confirmarSenha: [''],
-      aceitarTermos: [false]
-    });
-  }
-
-  onSubmit(): void {
-    console.log(this.form.value);
-  }
-}
+export class Cadastro {}
