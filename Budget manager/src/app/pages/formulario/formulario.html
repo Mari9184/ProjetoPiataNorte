@@ -15,95 +15,65 @@
             <p class="page-subtitle">Cozinha e sala - Apê Horizonte</p>
         </div>
 
-        <form class="budget-form">
+        <form class="budget-form" [formGroup]="form">
             <section class="card client-card" aria-labelledby="client-heading">
                 <h2 id="client-heading">Quem é o cliente?</h2>
                 <div class="client-grid">
                     <label class="field">
                         <span>Cliente</span>
-                        <input type="text" value="Ana Martins" aria-label="Cliente">
+                        <input type="text" formControlName="cliente" aria-label="Cliente">
                     </label>
                     <label class="field">
                         <span>Arquiteto</span>
-                        <input type="text" value="Beatriz Costa" aria-label="Arquiteto">
+                        <input type="text" formControlName="arquiteto" aria-label="Arquiteto">
                     </label>
                     <label class="field project-field">
                         <span>Projeto</span>
-                        <input type="text" value="Cozinha e sala - Apê Horizonte" aria-label="Projeto">
+                        <input type="text" formControlName="projeto" aria-label="Projeto">
                     </label>
                 </div>
             </section>
 
-            <section class="card furniture-card" aria-labelledby="furniture-heading">
+            <section class="card furniture-card" formArrayName="itens" aria-labelledby="furniture-heading">
                 <div class="section-head">
                     <h2 id="furniture-heading">Móveis e custos</h2>
                     <p>2 módulos · 1200 mm livres no total. Informe as medidas de cada móvel.</p>
                 </div>
 
-                <article class="furniture-item" aria-label="Móvel 1">
-                    <div class="item-heading"><strong>MÓVEL 1</strong><span>Quantidade: 1</span></div>
+                @for (item of itens.controls; track item; let i = $index) {
+                <article class="furniture-item" [formGroupName]="i" [attr.aria-label]="'Móvel ' + (i + 1)">
+                    <div class="item-heading"><strong>MÓVEL {{ i + 1 }}</strong><span>Quantidade: 1</span></div>
                     <label class="field item-name">
                         <span>Nome do item</span>
-                        <input type="text" value="Armário inferior - cozinha">
+                        <input type="text" formControlName="nome">
                     </label>
                     <label class="field item-description">
                         <span>Descrição</span>
-                        <textarea rows="2">Base inferior para cozinha com acabamento em MDF amadeirado.</textarea>
+                        <textarea rows="2" formControlName="descricao"></textarea>
                     </label>
                     <div class="measure-group">
                         <h3>Medidas (em metros)</h3>
                         <div class="three-column-grid">
-                            <label class="field"><span>Comprimento (m)</span><input type="text" value="3,00"></label>
-                            <label class="field"><span>Altura (m)</span><input type="text" value="0,90"></label>
-                            <label class="field"><span>Profundidade (m)</span><input type="text" value="0,60"></label>
+                            <label class="field"><span>Comprimento (m)</span><input type="text" formControlName="comprimento"></label>
+                            <label class="field"><span>Altura (m)</span><input type="text" formControlName="altura"></label>
+                            <label class="field"><span>Profundidade (m)</span><input type="text" formControlName="profundidade"></label>
                         </div>
                     </div>
                     <div class="cost-group">
                         <h3>Custos</h3>
                         <div class="three-column-grid">
                             <label class="field"><span>Valor da madeira</span><input type="text"
-                                    value="R$ 2.700,00"></label>
+                                    formControlName="madeira"></label>
                             <label class="field"><span>Insumos (total)</span><input type="text"
-                                    value="R$ 520,00"></label>
-                            <label class="field"><span>Mão de obra</span><input type="text" value="R$ 1.000,00"></label>
+                                    formControlName="insumos"></label>
+                            <label class="field"><span>Mão de obra</span><input type="text" formControlName="maoDeObra"></label>
                         </div>
                     </div>
-                    <div class="subtotal"><span>Subtotal do móvel</span><strong>R$ 4.220,00</strong></div>
+                    <div class="subtotal"><span>Subtotal do móvel</span><strong>{{ brl(subtotal(i)) }}</strong></div>
                 </article>
+                }
 
-                <article class="furniture-item" aria-label="Móvel 2">
-                    <div class="item-heading"><strong>MÓVEL 2</strong><span>Quantidade: 1</span></div>
-                    <label class="field item-name">
-                        <span>Nome do item</span>
-                        <input type="text" value="Painel com rack - sala">
-                    </label>
-                    <label class="field item-description">
-                        <span>Descrição</span>
-                        <textarea
-                            rows="2">Painel vertical com rack para sala com acabamento em MDF amadeirado.</textarea>
-                    </label>
-                    <div class="measure-group">
-                        <h3>Medidas (em metros)</h3>
-                        <div class="three-column-grid">
-                            <label class="field"><span>Comprimento (m)</span><input type="text" value="2,00"></label>
-                            <label class="field"><span>Altura (m)</span><input type="text" value="2,40"></label>
-                            <label class="field"><span>Profundidade (m)</span><input type="text" value="0,35"></label>
-                        </div>
-                    </div>
-                    <div class="cost-group">
-                        <h3>Custos</h3>
-                        <div class="three-column-grid">
-                            <label class="field"><span>Valor da madeira</span><input type="text"
-                                    value="R$ 1.800,00"></label>
-                            <label class="field"><span>Insumos (total)</span><input type="text"
-                                    value="R$ 280,00"></label>
-                            <label class="field"><span>Mão de obra</span><input type="text" value="R$ 700,00"></label>
-                        </div>
-                    </div>
-                    <div class="subtotal"><span>Subtotal do móvel</span><strong>R$ 2.780,00</strong></div>
-                </article>
-
-                <button class="add-item-button" type="button"><span aria-hidden="true">＋</span> Adicionar móvel</button>
+                <button class="add-item-button" type="button" (click)="adicionarMovel()"><span aria-hidden="true">＋</span> Adicionar móvel</button>
             </section>
 
             <section class="card payment-card" aria-labelledby="payment-heading">
@@ -111,11 +81,11 @@
                 <div class="payment-grid">
                     <label class="field">
                         <span>Pagamento</span>
-                        <input type="text" value="50% na aprovação e 50% na entrega e instalação.">
+                        <input type="text" formControlName="pagamento">
                     </label>
                     <label class="field">
                         <span>Prazo de execução</span>
-                        <input type="text" value="35 dias úteis">
+                        <input type="text" formControlName="prazo">
                     </label>
                 </div>
                 <p class="payment-note">Entrada: R$ 3.500,00 · saldo: R$ 3.500,00.</p>
@@ -135,10 +105,13 @@
                     <div><span>Painel com rack - sala</span><strong>R$ 2.780,00</strong></div>
                 </div>
                 <div class="summary-actions">
-                    <button class="save-button" type="button">Salvar orçamento</button>
+                    <button class="save-button" type="button" (click)="salvar()" [disabled]="salvando">Salvar orçamento</button>
                     <button class="preview-button" type="button" routerLink="/preview">Visualizar orçamento <span
                             aria-hidden="true">›</span></button>
                 </div>
+                @if (erro) {
+                <p class="payment-note" role="alert">{{ erro }}</p>
+                }
             </section>
         </form>
 
