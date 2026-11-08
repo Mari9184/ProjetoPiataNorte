@@ -1,6 +1,8 @@
 export interface ItemOrcamento {
   id_item?: string;
   descricao: string;
+  /** Campo legado, mantido para exibir orçamentos já salvos. */
+  descricao_negrito?: boolean;
   med_largura: number;
   med_altura: number;
   med_profundidade: number;
@@ -29,7 +31,6 @@ export interface OrcamentoFormDraft {
   cliente: string;
   arquiteto: string;
   projeto: string;
-  pagamento: string;
   prazo: string;
   itens: {
     nome: string;

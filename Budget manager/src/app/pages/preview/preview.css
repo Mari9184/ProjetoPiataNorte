@@ -8,6 +8,7 @@ app-preview {
   --font-title: "Montserrat", "Segoe UI", Arial, sans-serif;
   --font-sans: "Inter", "Segoe UI", Arial, sans-serif;
   --font-doc: Georgia, "Times New Roman", Times, serif;
+  --font-script: "Great Vibes", cursive;
 
   display: block;
   width: 100%;
@@ -230,7 +231,7 @@ app-preview .preview__message { margin-top: 32px; text-align: center; }
 .a4-header__right { text-align: right; }
 
 .a4-header__title {
-  font-family: Georgia, "Times New Roman", Times, serif;
+  font-family: var(--font-script);
   font-size: 20pt;
   font-weight: bold;
   color: #000000;
@@ -240,7 +241,7 @@ app-preview .preview__message { margin-top: 32px; text-align: center; }
 }
 
 .a4-header__date {
-  font-family: Georgia, "Times New Roman", Times, serif;
+  font-family: var(--font-script);
   font-size: 11pt;
   margin: 0;
   color: #000000;
@@ -259,6 +260,7 @@ app-preview .preview__message { margin-top: 32px; text-align: center; }
   margin-bottom: 8px;
   text-align: justify;
 }
+.a4-item__description--bold { font-weight: bold; }
 
 /* Condições do Orçamento */
 .a4-conditions { margin-bottom: 20px; }
@@ -288,6 +290,7 @@ app-preview .preview__message { margin-top: 32px; text-align: center; }
 .a4-footer {
   margin-top: auto;
   text-align: center;
+  font-family: var(--font-script);
   font-size: 10pt;
   line-height: 1.4;
   padding-top: 16px;

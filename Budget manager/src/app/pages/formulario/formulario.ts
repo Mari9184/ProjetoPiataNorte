@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MenuTop } from '../../component/menu-top/menu-top';
+import { RichTextEditor } from '../../component/rich-text-editor/rich-text-editor';
 import { ItemOrcamento, Orcamento, OrcamentoFormDraft } from '../../models/orcamento.model';
 import { OrcamentoService } from '../../services/orcamento.service';
 import { errorCode } from '../../utils/error-code';
@@ -25,7 +26,7 @@ const SO_NUMERO = /^\s*\d+([.,]\d+)?\s*$/;
 
 /** Formulário único para criação e edição de orçamentos e seus itens. */
 @Component({
-  imports: [MenuTop, RouterLink, ReactiveFormsModule],
+  imports: [MenuTop, RichTextEditor, RouterLink, ReactiveFormsModule],
   selector: 'app-formulario',
   standalone: true,
   styleUrl: './formulario.css',
@@ -52,7 +53,6 @@ export class Formulario {
     cliente: ['', Validators.required],
     arquiteto: [''],
     projeto: ['', Validators.required],
-    pagamento: [''],
     prazo: ['', Validators.required],
     itens: this.fb.nonNullable.array([this.novoItem()]),
   });
@@ -124,16 +124,16 @@ export class Formulario {
     }
   }
 
-  private novoItem(inicial: Partial<Record<string, string>> = {}) {
+  private novoItem(inicial: Partial<OrcamentoFormDraft['itens'][number]> = {}) {
     return this.fb.nonNullable.group({
-      nome: [inicial['nome'] ?? '', Validators.required],
-      descricao: [inicial['descricao'] ?? ''],
-      comprimento: [inicial['comprimento'] ?? '', [Validators.required, Validators.pattern(SO_NUMERO)]],
-      altura: [inicial['altura'] ?? '', [Validators.required, Validators.pattern(SO_NUMERO)]],
-      profundidade: [inicial['profundidade'] ?? '', [Validators.required, Validators.pattern(SO_NUMERO)]],
-      madeira: [inicial['madeira'] ?? '', Validators.required],
-      insumos: [inicial['insumos'] ?? '0'],
-      maoDeObra: [inicial['maoDeObra'] ?? '0'],
+      nome: [inicial.nome ?? '', Validators.required],
+      descricao: [inicial.descricao ?? ''],
+      comprimento: [inicial.comprimento ?? '', [Validators.required, Validators.pattern(SO_NUMERO)]],
+      altura: [inicial.altura ?? '', [Validators.required, Validators.pattern(SO_NUMERO)]],
+      profundidade: [inicial.profundidade ?? '', [Validators.required, Validators.pattern(SO_NUMERO)]],
+      madeira: [inicial.madeira ?? '', Validators.required],
+      insumos: [inicial.insumos ?? '0'],
+      maoDeObra: [inicial.maoDeObra ?? '0'],
     });
   }
 
@@ -142,7 +142,6 @@ export class Formulario {
       cliente: orcamento.cliente,
       arquiteto: orcamento.arquiteto ?? '',
       projeto: orcamento.nome_projeto,
-      pagamento: orcamento.pagamento ?? '',
       prazo: orcamento.prazo_de_entrega ?? '',
     });
 
@@ -150,10 +149,15 @@ export class Formulario {
     for (const item of orcamento.itens ?? []) {
       const separador = item.descricao.indexOf(': ');
       const nome = separador >= 0 ? item.descricao.slice(0, separador) : item.descricao;
-      const descricao = separador >= 0 ? item.descricao.slice(separador + 2) : '';
-      const custoMadeira = item.valor > 0
-        ? Math.max(0, item.valor - item.insumos - item.taxa_mao_de_obra)
-        : item.material_por_metro3 * item.metro_movel3;
+      let descricao = separador >= 0 ? item.descricao.slice(separador + 2) : '';
+      if (item.descricao_negrito) {
+        const descricaoEscapada = descricao.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        descricao = `<strong>${descricaoEscapada}</strong>`;
+      }
+      const precoMadeiraM3 = item.material_por_metro3 ??
+        (item.metro_movel3 > 0
+          ? Math.max(0, item.valor - item.insumos - item.taxa_mao_de_obra) / item.metro_movel3
+          : 0);
 
       this.itens.push(this.novoItem({
         nome,
@@ -161,7 +165,7 @@ export class Formulario {
         comprimento: String(item.med_largura),
         altura: String(item.med_altura),
         profundidade: String(item.med_profundidade),
-        madeira: String(arredondar(custoMadeira)),
+        madeira: String(precoMadeiraM3),
         insumos: String(item.insumos),
         maoDeObra: String(item.taxa_mao_de_obra),
       }));
@@ -175,7 +179,6 @@ export class Formulario {
       cliente: rascunho.cliente,
       arquiteto: rascunho.arquiteto,
       projeto: rascunho.projeto,
-      pagamento: rascunho.pagamento,
       prazo: rascunho.prazo,
     });
     this.itens.clear();
@@ -246,7 +249,7 @@ export class Formulario {
         med_altura: altura,
         med_profundidade: profundidade,
         metro_movel3: arredondar(volume, 3),
-        material_por_metro3: volume > 0 ? arredondar(madeira / volume) : 0,
+        material_por_metro3: precoMadeiraM3,
         insumos,
         taxa_mao_de_obra: maoDeObra,
         valor: arredondar(madeira + insumos + maoDeObra),
@@ -262,7 +265,6 @@ export class Formulario {
       status: this.orcamentoOriginal?.status ?? this.statusInicial,
       itens,
       arquiteto: v.arquiteto.trim(),
-      pagamento: v.pagamento.trim(),
     };
   }
 

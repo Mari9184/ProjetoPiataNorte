@@ -11,7 +11,9 @@
             <div class="title-line">
                 <h1>{{ orcamentoId ? 'Editar orçamento' : 'Novo orçamento' }}</h1>
                 @if (statusAtual) {
-                <span class="status"><i aria-hidden="true"></i>{{ statusAtual }}</span>
+                <span class="status" [class.status--finalizado]="statusFinalizado">
+                    <i aria-hidden="true"></i>{{ statusAtual }}
+                </span>
                 <button class="status-toggle-button" type="button" (click)="alternarStatus()"
                     [disabled]="salvandoStatus || carregando || !orcamentoEncontrado">
                     {{ salvandoStatus ? 'Atualizando...' : statusFinalizado ? 'Voltar para produção' : 'Finalizar projeto' }}
@@ -66,10 +68,10 @@
                         <span>Nome do item</span>
                         <input type="text" formControlName="nome">
                     </label>
-                    <label class="field item-description">
+                    <div class="field item-description">
                         <span>Descrição</span>
-                        <textarea rows="2" formControlName="descricao"></textarea>
-                    </label>
+                        <app-rich-text-editor formControlName="descricao"></app-rich-text-editor>
+                    </div>
                     <div class="measure-group">
                         <h3>Medidas (em metros)</h3>
                         <div class="three-column-grid">
@@ -96,12 +98,8 @@
             </section>
 
             <section class="card payment-card" aria-labelledby="payment-heading">
-                <h2 id="payment-heading">Pagamento e prazo</h2>
+                <h2 id="payment-heading">Prazo</h2>
                 <div class="payment-grid">
-                    <label class="field">
-                        <span>Pagamento</span>
-                        <input type="text" formControlName="pagamento">
-                    </label>
                     <label class="field">
                         <span>Prazo de execução</span>
                         <input type="text" formControlName="prazo">

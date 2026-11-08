@@ -76,6 +76,14 @@ h1 {
   border-radius: 50%;
 }
 
+.status--finalizado {
+  color: #188038;
+}
+
+.status--finalizado i {
+  background: #188038;
+}
+
 .status-toggle-button {
   min-height: 34px;
   padding: 7px 13px;
@@ -374,7 +382,7 @@ h1 {
 
 .payment-grid {
   display: grid;
-  grid-template-columns: 1.18fr 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: 14px;
   margin-top: 14px;
 }

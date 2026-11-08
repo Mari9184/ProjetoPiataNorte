@@ -28,4 +28,12 @@ describe('Preview', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('shows the budget total in the conditions section', () => {
+    fixture.detectChanges();
+
+    const conditions = fixture.nativeElement.querySelector('.a4-conditions') as HTMLElement;
+    expect(conditions.textContent).toContain('Total');
+    expect(conditions.querySelector('li strong')?.textContent).toContain(component.formatarReais(10000));
+  });
 });

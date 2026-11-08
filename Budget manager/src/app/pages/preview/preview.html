@@ -52,7 +52,8 @@
             <div class="a4-items">
                 @for (movel of orcamento.itens; track $index; let posicao = $index) {
                 <p class="a4-item">
-                    {{ posicao + 1 }} - {{ movel.descricao }}. Medidas: {{ formatarMetros(movel.med_largura) }} m de comprimento, {{ formatarMetros(movel.med_altura) }} m de altura e {{ formatarMetros(movel.med_profundidade) }} m de profundidade. Quantidade: 1. Valor: {{ formatarReais(movel.valor) }};
+                    {{ posicao + 1 }} -
+                    <span [class.a4-item__description--bold]="movel.descricao_negrito" [innerHTML]="movel.descricao"></span>. Medidas: {{ formatarMetros(movel.med_largura) }} m de comprimento, {{ formatarMetros(movel.med_altura) }} m de altura e {{ formatarMetros(movel.med_profundidade) }} m de profundidade. Quantidade: 1. Valor: {{ formatarReais(movel.valor) }};
                 </p>
                 }
             </div>
@@ -64,6 +65,7 @@
                     <li>Prazo de entrega de {{ orcamento.prazo_de_entrega || '10' }} após a contratação.</li>
                     <li>1 ano de garantia, desde que observadas as condições adequadas de uso.</li>
                     <li>O pagamento é efetuado 50% de sinal na contratação e 50% na entrega e aprovação.</li>
+                    <li><strong>Total {{ formatarReais(orcamento.valor_total) }}.</strong></li>
                 </ul>
             </section>
 
