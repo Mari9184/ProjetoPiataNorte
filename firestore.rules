@@ -1,0 +1,63 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn() && request.auth.token.get('admin', false) == true;
+    }
+
+    function validProfile(uid) {
+      let data = request.resource.data;
+      return data.keys().hasOnly([
+          'uid',
+          'nome',
+          'email',
+          'criadoEm',
+          'ultimoAcesso'
+        ])
+        && data.uid == uid
+        && data.email is string
+        && (!('nome' in data) || data.nome is string)
+        && (!('criadoEm' in data) || data.criadoEm is timestamp)
+        && (!('ultimoAcesso' in data) || data.ultimoAcesso is timestamp);
+    }
+
+    function validBudget() {
+      let data = request.resource.data;
+      return data.keys().hasAll([
+          'nome_projeto',
+          'data_orcamento',
+          'cliente',
+          'valor_total',
+          'status',
+          'itens'
+        ])
+        && data.nome_projeto is string
+        && (data.data_orcamento is string || data.data_orcamento is timestamp)
+        && data.cliente is string
+        && data.valor_total is number
+        && data.status is string
+        && data.itens is list
+        && (!('editor' in data) || data.editor is string);
+    }
+
+    match /users/{uid} {
+      allow get, list: if signedIn();
+      allow create: if signedIn() && validProfile(uid);
+      allow update: if signedIn()
+        && (request.auth.uid == uid || isAdmin())
+        && validProfile(uid);
+      allow delete: if isAdmin();
+    }
+
+    match /orcamentos/{orcamentoId} {
+      allow read: if signedIn();
+      allow create, update: if signedIn() && validBudget();
+      allow delete: if signedIn();
+    }
+  }
+}
